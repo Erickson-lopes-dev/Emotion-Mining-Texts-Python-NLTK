@@ -45,7 +45,7 @@ def removerstoprwords(texto):
     return frases
 
 
-print(removerstoprwords(base))
+# print(removerstoprwords(base))
 
 
 # podemos perder um pouco de informação com stemming
@@ -63,7 +63,7 @@ def aplicastemmer(texto):
 
 
 frasescomstemming = aplicastemmer(base)
-print(frasescomstemming)
+# print(frasescomstemming)
 
 
 def buscapalavras(frases):
@@ -76,7 +76,7 @@ def buscapalavras(frases):
 
 palavras = buscapalavras(frasescomstemming)
 
-print(palavras)
+# print(palavras)
 
 
 def buscafrequencia(palavras):
@@ -88,7 +88,7 @@ def buscafrequencia(palavras):
 frequencia = buscafrequencia(palavras)
 
 # 50 primeiras palavras
-print(frequencia.most_common(50))
+# print(frequencia.most_common(50))
 
 
 def buscapalavrasunicas(palavras):
@@ -99,7 +99,7 @@ def buscapalavrasunicas(palavras):
 
 palavrasunicas = buscapalavrasunicas(frequencia)
 
-print(palavrasunicas)
+# print(palavrasunicas)
 
 
 def extratorpalavras(documento):
@@ -115,11 +115,44 @@ def extratorpalavras(documento):
 caracteristicasfrases = extratorpalavras(['am', 'nov', 'dia'])
 
 # utilizando algoritmo de stemming
-print(caracteristicasfrases)
+# print(caracteristicasfrases)
 
 # aplicar caracteristicas / passa a função que faz a extração de cada palavra
-# passando as frases com stemming ( separação por vadical) e emoção da frase
+# passando as frases com stemming ( separação por radical) e emoção da frase
 # verifica se tem a especifica caracteristica para ser frase de medo ou alegria
 basecompleta = nltk.classify.apply_features(extratorpalavras, frasescomstemming)
 
-print(basecompleta[10])
+# print(basecompleta[10])
+
+# consatrpoi a tablea de probabilidade
+classificador = nltk.NaiveBayesClassifier.train(basecompleta)
+
+# exibe os classificadores
+# print(classificador.labels())
+
+# exibe as palavras mais informativas e suas probabilidades
+# print(classificador.show_most_informative_features(10))
+
+teste = 'eu te amo amor'
+
+testestemming = []
+stemmer = nltk.stem.RSLPStemmer()
+# percorre as palavras
+for palavras in teste.split():
+    # joga cada uma das palavras na var
+    comstem = [p for p in palavras.split()]
+    # pega o radical
+    testestemming.append(str(stemmer.stem(comstem[0])))
+
+print(testestemming)
+
+novo = extratorpalavras(testestemming)
+
+print(novo)
+
+print(classificador.classify(novo))
+
+distribuicaoo = classificador.prob_classify(novo)
+
+for classe in distribuicaoo.samples():
+    print(f'{classe:>7} {distribuicaoo.prob(classe)}')
